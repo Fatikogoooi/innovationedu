@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>{% block title %}InnovationEdu{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"/>
+{% block head %}{% endblock %}
+</head>
+<body>
+<nav class="navbar">
+  <a href="/" class="nav-logo">
+    <span class="logo-icon">⬡</span>
+    InnovationEdu
+  </a>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Басты бет</a>
+    <a href="/learning" class="nav-link">Оқу бөлімі</a>
+    <a href="/test" class="nav-link">Тест</a>
+    <a href="/chat" class="nav-link">AI Чат</a>
+  </div>
+  <div class="nav-actions">
+    {% if session.get('user_id') %}
+      <a href="/admin" class="btn-nav-primary">Админ панель</a>
+      <a href="/logout" class="btn-nav-ghost">Шығу</a>
+    {% else %}
+      <a href="/login" class="btn-nav-ghost">Кіру</a>
+      <a href="/register" class="btn-nav-primary">Тіркелу</a>
+    {% endif %}
+  </div>
+  <button class="burger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/">Басты бет</a>
+  <a href="/learning">Оқу бөлімі</a>
+  <a href="/test">Тест</a>
+  <a href="/chat">AI Чат</a>
+  {% if session.get('user_id') %}
+    <a href="/admin">Админ панель</a>
+    <a href="/logout">Шығу</a>
+  {% else %}
+    <a href="/login">Кіру</a>
+    <a href="/register">Тіркелу</a>
+  {% endif %}
+</div>
+<main>{% block content %}{% endblock %}</main>
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><span class="logo-icon">⬡</span> InnovationEdu</div>
+    <p>Информатика пәніне инновациялық оқыту әдістерін интеграциялау жобасы</p>
+    <p class="footer-copy">© 2025 InnovationEdu</p>
+  </div>
+</footer>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
