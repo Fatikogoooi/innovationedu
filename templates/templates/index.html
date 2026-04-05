@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}InnovationEdu — Басты бет{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-tag">⬡ Инновациялық Оқыту Платформасы</div>
+  <h1 class="fade-up">{{ contents.get('hero_title', 'Инновациялық') }}<br/><span class="accent">Информатика</span> Курсы</h1>
+  <p class="hero-sub fade-up delay-1">{{ contents.get('hero_subtitle', 'Танымдық белсенділікті арттыру — заманауи әдістер арқылы') }}</p>
+  <div class="hero-actions fade-up delay-2">
+    <a href="/learning" class="btn btn-primary">Оқуды бастау</a>
+    <a href="/test" class="btn btn-secondary">Тест тапсыру</a>
+  </div>
+</section>
+<section class="section-sm" style="border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface-2);">
+  <div class="container">
+    <div class="grid-4">
+      <div class="metric-card"><div class="metric-num">3</div><div class="metric-label">Инновациялық әдіс</div></div>
+      <div class="metric-card"><div class="metric-num">4</div><div class="metric-label">Оқу бөлімі</div></div>
+      <div class="metric-card"><div class="metric-num">AI</div><div class="metric-label">Интерактивті чат</div></div>
+      <div class="metric-card"><div class="metric-num">100%</div><div class="metric-label">Қазақ тілінде</div></div>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+      <div>
+        <span class="section-tag">Жоба туралы</span>
+        <h2 class="section-title">Неліктен бұл платформа маңызды?</h2>
+        <p class="section-sub">{{ contents.get('about_text', 'Бұл платформа оқушылардың информатика пәніне деген қызығушылығын арттыруға арналған.') }}</p>
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:14px;">
+          <div class="flex-center gap-12"><div style="width:36px;height:36px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</div><p style="font-size:15px;color:var(--ink-2);">Геймификация арқылы оқуға деген мотивация артады</p></div>
+          <div class="flex-center gap-12"><div style="width:36px;height:36px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</div><p style="font-size:15px;color:var(--ink-2);">Жобалық оқыту (PBL) шығармашылықты дамытады</p></div>
+          <div class="flex-center gap-12"><div style="width:36px;height:36px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</div><p style="font-size:15px;color:var(--ink-2);">STEM тәсілі практикалық дағдылар береді</p></div>
+        </div>
+        <div style="margin-top:28px;"><a href="/learning" class="btn btn-primary">Оқу бөліміне өту →</a></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="card" style="background:var(--accent-light);border-color:rgba(26,86,240,.12);"><div style="font-size:28px;margin-bottom:10px;">🎮</div><div style="font-weight:600;margin-bottom:6px;">Геймификация</div><p style="font-size:13px;color:var(--ink-2);">Ойын элементтері арқылы оқу</p></div>
+        <div class="card"><div style="font-size:28px;margin-bottom:10px;">📋</div><div style="font-weight:600;margin-bottom:6px;">PBL</div><p style="font-size:13px;color:var(--ink-2);">Жобалық оқыту әдісі</p></div>
+        <div class="card"><div style="font-size:28px;margin-bottom:10px;">🔬</div><div style="font-weight:600;margin-bottom:6px;">STEM</div><p style="font-size:13px;color:var(--ink-2);">Ғылым-технология интеграциясы</p></div>
+        <div class="card" style="background:var(--green-light);border-color:rgba(18,183,106,.15);"><div style="font-size:28px;margin-bottom:10px;">🤖</div><div style="font-weight:600;margin-bottom:6px;">AI Чат</div><p style="font-size:13px;color:var(--ink-2);">Интерактивті жауап жүйесі</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section" style="background:var(--surface-2);border-top:1px solid var(--border);">
+  <div class="container">
+    <div style="text-align:center;max-width:560px;margin:0 auto;">
+      <h2 class="section-title">Бастауға дайынсыз ба?</h2>
+      <p style="color:var(--ink-2);margin-bottom:28px;">Тест тапсырып, білімінізді тексеріңіз немесе AI чатта сұрақ қойыңыз.</p>
+      <div class="hero-actions">
+        <a href="/test" class="btn btn-primary">Тест тапсыру</a>
+        <a href="/chat" class="btn btn-secondary">AI Чат</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
