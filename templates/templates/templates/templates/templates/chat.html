@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}AI Чат — InnovationEdu{% endblock %}
+{% block content %}
+<section style="padding:56px 0 40px;border-bottom:1px solid var(--border);">
+  <div class="container">
+    <span class="section-tag">Интерактивті жүйе</span>
+    <h1 class="section-title">AI Оқыту Чаты</h1>
+    <p class="section-sub">Информатика тақырыптары бойынша кез келген сұрақ қойыңыз</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container" style="max-width:720px;">
+    <div style="display:grid;grid-template-columns:1fr 240px;gap:20px;align-items:start;">
+      <div>
+        <div class="chat-window" id="chatWindow">
+          <div class="msg msg-bot">
+            <div class="msg-avatar">🤖</div>
+            <div class="msg-bubble">Сәлем! Мен InnovationEdu AI көмекшісімін. 👋<br/><br/>Информатика тақырыптары бойынша сұрақ қойыңыз. Мысалы: <em>алгоритм</em>, <em>Python</em>, <em>HTML</em>, <em>желі</em>, <em>геймификация</em>, <em>STEM</em>.</div>
+          </div>
+        </div>
+        <div class="chat-input-wrap">
+          <input type="text" id="chatInput" placeholder="Сұрағыңызды жазыңыз..." onkeydown="if(event.key==='Enter')sendMsg()"/>
+          <button class="btn btn-primary" onclick="sendMsg()">Жіберу</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--ink-3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Жылдам сұрақтар</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          {% for q in ['Алгоритм дегеніміз не?','Python тілін қалай үйренемін?','HTML дегеніміз не?','Желі түрлері қандай?','Геймификация дегеніміз не?','STEM дегеніміз не?','PBL оқыту әдісі','Деректер базасы дегеніміз не?'] %}
+          <button class="btn btn-secondary btn-sm" style="text-align:left;justify-content:flex-start;" onclick="quickAsk('{{ q }}')">{{ q }}</button>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+async function sendMsg(){
+  const input=document.getElementById('chatInput');
+  const msg=input.value.trim();if(!msg)return;input.value='';
+  addMsg(msg,'user');
+  const loadId=addMsg('...','bot',true);
+  const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})});
+  const data=await res.json();
+  document.getElementById(loadId).remove();
+  addMsg(data.reply,'bot');
+}
+function quickAsk(q){document.getElementById('chatInput').value=q;sendMsg();}
+function addMsg(text,type,isLoading=false){
+  const win=document.getElementById('chatWindow');
+  const id='msg-'+Date.now();
+  const isBot=type==='bot';
+  const div=document.createElement('div');
+  div.className=`msg ${isBot?'msg-bot':'msg-user'}`;div.id=id;
+  div.innerHTML=`${isBot?'<div class="msg-avatar">🤖</div>':''}<div class="msg-bubble" style="${isLoading?'color:var(--ink-3);':''}">${text}</div>${!isBot?'<div class="msg-avatar">👤</div>':''}`;
+  win.appendChild(div);win.scrollTop=win.scrollHeight;return id;
+}
+</script>
+{% endblock %}
