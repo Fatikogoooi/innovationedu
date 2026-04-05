@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Оқу бөлімі — InnovationEdu{% endblock %}
+{% block content %}
+<section style="padding:56px 0 40px;border-bottom:1px solid var(--border);">
+  <div class="container">
+    <span class="section-tag">Инновациялық әдістер</span>
+    <h1 class="section-title">Оқу бөлімі</h1>
+    <p class="section-sub">Информатика пәніне арналған заманауи оқыту әдістерімен танысыңыз</p>
+    <div style="display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;" id="filterBtns">
+      <button class="btn btn-primary btn-sm" onclick="filterCards('all',this)">Барлығы</button>
+      <button class="btn btn-secondary btn-sm" onclick="filterCards('gamification',this)">Геймификация</button>
+      <button class="btn btn-secondary btn-sm" onclick="filterCards('pbl',this)">PBL</button>
+      <button class="btn btn-secondary btn-sm" onclick="filterCards('stem',this)">STEM</button>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="mb-32" data-cat="gamification">
+      <div class="flex-between mb-24">
+        <div><h2 style="font-size:22px;font-weight:700;letter-spacing:-0.5px;">🎮 Геймификация</h2><p style="font-size:14px;color:var(--ink-3);margin-top:4px;">Ойын механикасын оқу процесіне енгізу</p></div>
+        <span class="badge badge-blue">Ең танымал</span>
+      </div>
+      <div class="grid-3">
+        <div class="method-card"><div class="method-icon" style="background:#EEF3FF;">🏆</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">Ұпай жүйесі</h3><p style="font-size:14px;color:var(--ink-2);line-height:1.6;">Оқушылар тапсырма орындаған сайын ұпай жинайды. Бұл мотивацияны едәуір арттырады.</p></div>
+        <div class="method-card"><div class="method-icon" style="background:#ECFDF3;">🥇</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">Медальдар мен жетістіктер</h3><p style="font-size:14px;color:var(--ink-2);line-height:1.6;">Белгілі бір жетістіктерге жеткенде медаль берілетін жүйе.</p></div>
+        <div class="method-card"><div class="method-icon" style="background:#FFF7ED;">📊</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">Рейтинг кестесі</h3><p style="font-size:14px;color:var(--ink-2);line-height:1.6;">Оқушылар арасындағы бәсекелестік элементі.</p></div>
+      </div>
+    </div>
+    <div class="mb-32" data-cat="pbl">
+      <div class="flex-between mb-24">
+        <div><h2 style="font-size:22px;font-weight:700;letter-spacing:-0.5px;">📋 Жобалық Оқыту (PBL)</h2><p style="font-size:14px;color:var(--ink-3);margin-top:4px;">Project-Based Learning — нақты мәселені шешу арқылы оқу</p></div>
+        <span class="badge badge-green">Тиімді</span>
+      </div>
+      <div class="grid-2">
+        <div class="method-card">
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">PBL кезеңдері</h3>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;">1</div><div><div style="font-weight:600;font-size:14px;">Мәселені анықтау</div><div style="font-size:13px;color:var(--ink-3);">Нақты өмірдегі мәселені таңдайды</div></div></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;">2</div><div><div style="font-weight:600;font-size:14px;">Зерттеу жүргізу</div><div style="font-size:13px;color:var(--ink-3);">Деректер жинап, ақпарат іздейді</div></div></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:28px;height:28px;border-radius:50%;background:var(--amber);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;">3</div><div><div style="font-weight:600;font-size:14px;">Шешім жасау</div><div style="font-size:13px;color:var(--ink-3);">Жобаны жоспарлап, прототип жасайды</div></div></div>
+            <div style="display:flex;gap:12px;align-items:flex-start;"><div style="width:28px;height:28px;border-radius:50%;background:#7C3AED;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;">4</div><div><div style="font-weight:600;font-size:14px;">Таныстыру</div><div style="font-size:13px;color:var(--ink-3);">Нәтижені қорғайды және талдайды</div></div></div>
+          </div>
+        </div>
+        <div class="method-card" style="background:var(--surface-2);">
+          <h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">Мысал жоба: «Мектеп желісі»</h3>
+          <p style="font-size:14px;color:var(--ink-2);margin-bottom:16px;line-height:1.6;">Оқушылар мектептің компьютер бөлмесіне LAN желісін жоспарлайды.</p>
+          <div style="padding:16px;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border);">
+            <div style="font-size:12px;font-weight:600;color:var(--ink-3);margin-bottom:10px;">КОМАНДАЛЫҚ РӨЛДЕР</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;">
+              <div>🔧 Желі инженері</div><div>🎨 Дизайнер</div>
+              <div>📊 Сарапшы</div><div>🎤 Спикер</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-cat="stem">
+      <div class="flex-between mb-24">
+        <div><h2 style="font-size:22px;font-weight:700;letter-spacing:-0.5px;">🔬 STEM Интеграциясы</h2><p style="font-size:14px;color:var(--ink-3);margin-top:4px;">Ғылым, Технология, Инженерия, Математиканы біріктіру</p></div>
+        <span class="badge badge-amber">Болашақ бағыт</span>
+      </div>
+      <div class="grid-3">
+        <div class="method-card"><div class="method-icon" style="background:#F0F9FF;">🔭</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">Ғылым (Science)</h3><p style="font-size:14px;color:var(--ink-2);line-height:1.6;">Алгоритмдерді физика және биология мысалдары арқылы түсіндіру.</p></div>
+        <div class="method-card"><div class="method-icon" style="background:#EEF3FF;">💻</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">Технология</h3><p style="font-size:14px;color:var(--ink-2);line-height:1.6;">Arduino, Raspberry Pi, Python арқылы нақты жобалар.</p></div>
+        <div class="method-card"><div class="method-icon" style="background:#ECFDF3;">📐</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;">Математика</h3><p style="font-size:14px;color:var(--ink-2);line-height:1.6;">Бинарлық санау жүйесі, логика, графтар теориясы.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+function filterCards(cat,btn){
+  document.querySelectorAll('#filterBtns button').forEach(b=>b.className='btn btn-secondary btn-sm');
+  btn.className='btn btn-primary btn-sm';
+  document.querySelectorAll('[data-cat]').forEach(el=>el.style.display=(cat==='all'||el.dataset.cat===cat)?'':'none');
+}
+</script>
+{% endblock %}
