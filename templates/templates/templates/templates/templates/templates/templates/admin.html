@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block title %}Админ Панель — InnovationEdu{% endblock %}
+{% block content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <div style="padding:8px 12px;margin-bottom:12px;">
+      <div style="font-size:14px;font-weight:600;">{{ username }}</div>
+      <div class="badge badge-blue mt-8">Администратор</div>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--border);margin-bottom:12px;"/>
+    <a href="#" class="sidebar-link active" onclick="showSection('dashboard',this)"><span class="sidebar-icon">📊</span> Басқару тақтасы</a>
+    <a href="#" class="sidebar-link" onclick="showSection('questions',this)"><span class="sidebar-icon">❓</span> Сұрақтар</a>
+    <a href="#" class="sidebar-link" onclick="showSection('results',this)"><span class="sidebar-icon">📈</span> Нәтижелер</a>
+    <a href="#" class="sidebar-link" onclick="showSection('content',this)"><span class="sidebar-icon">✏️</span> Контент</a>
+    <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;"/>
+    <a href="/" class="sidebar-link"><span class="sidebar-icon">🏠</span> Сайтқа өту</a>
+    <a href="/logout" class="sidebar-link" style="color:var(--red);"><span class="sidebar-icon">🚪</span> Шығу</a>
+  </aside>
+  <div class="admin-content">
+    <div class="admin-section active" id="sec-dashboard">
+      <div class="admin-header"><h1>Басқару тақтасы</h1><p>Жалпы статистика және жылдам шолу</p></div>
+      <div class="grid-4 mb-32">
+        <div class="metric-card"><div class="metric-num">{{ stats.total_results }}</div><div class="metric-label">Тест тапсырылды</div></div>
+        <div class="metric-card"><div class="metric-num" style="color:var(--green);">{{ "%.0f"|format(stats.avg_score) }}%</div><div class="metric-label">Орташа нәтиже</div></div>
+        <div class="metric-card"><div class="metric-num">{{ stats.total_questions }}</div><div class="metric-label">Жалпы сұрақтар</div></div>
+        <div class="metric-card"><div class="metric-num" style="color:var(--accent);">4</div><div class="metric-label">Сайт беттері</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3 style="font-weight:600;margin-bottom:16px;">Соңғы нәтижелер</h3>
+          {% if results %}
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            {% for r in results[:5] %}
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--surface-2);border-radius:var(--radius-sm);">
+              <div><div style="font-size:14px;font-weight:500;">{{ r.student_name }}</div><div style="font-size:12px;color:var(--ink-3);">{{ r.taken_at.strftime('%d.%m.%Y %H:%M') }}</div></div>
+              <span class="badge {% if r.percentage >= 80 %}badge-green{% elif r.percentage >= 60 %}badge-blue{% else %}badge-red{% endif %}">{{ r.percentage }}%</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}<p style="color:var(--ink-3);font-size:14px;">Әлі нәтиже жоқ</p>{% endif %}
+        </div>
+        <div class="card">
+          <h3 style="font-weight:600;margin-bottom:16px;">Жылдам іс-әрекеттер</h3>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <button class="btn btn-secondary" onclick="showSection('questions',document.querySelector('[onclick*=questions]'))">➕ Жаңа сұрақ қосу</button>
+            <button class="btn btn-secondary" onclick="showSection('results',document.querySelector('[onclick*=results]'))">📈 Нәтижелерді көру</button>
+            <button class="btn btn-secondary" onclick="showSection('content',document.querySelector('[onclick*=content]'))">✏️ Контентті өзгерту</button>
+            <a href="/test" target="_blank" class="btn btn-secondary">🧪 Тестті тексеру</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="admin-section" id="sec-questions">
+      <div class="admin-header flex-between">
+        <div><h1>Тест Сұрақтары</h1><p>Сұрақтарды қосу, өшіру және басқару</p></div>
+        <button class="btn btn-primary" onclick="toggleAddForm()">➕ Жаңа сұрақ</button>
+      </div>
+      <div class="card mb-24" id="addQForm" style="display:none;">
+        <h3 style="font-weight:600;margin-bottom:16px;">Жаңа сұрақ қосу</h3>
+        <div class="form-group"><label class="form-label">Сұрақ мәтіні</label><textarea class="form-textarea" id="qText" placeholder="Сұрақты жазыңыз..."></textarea></div>
+        <div class="grid-2">
+          <div class="form-group"><label class="form-label">А жауабы</label><input type="text" class="form-input" id="optA"/></div>
+          <div class="form-group"><label class="form-label">Ә жауабы</label><input type="text" class="form-input" id="optB"/></div>
+          <div class="form-group"><label class="form-label">Б жауабы</label><input type="text" class="form-input" id="optC"/></div>
+          <div class="form-group"><label class="form-label">В жауабы</label><input type="text" class="form-input" id="optD"/></div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group"><label class="form-label">Дұрыс жауап</label><select class="form-select" id="correct"><option value="a">А</option><option value="b">Ә</option><option value="c">Б</option><option value="d">В</option></select></div>
+          <div class="form-group"><label class="form-label">Тақырып</label><input type="text" class="form-input" id="topic" value="Жалпы"/></div>
+        </div>
+        <div class="alert alert-error" id="addErr"></div>
+        <div class="alert alert-success" id="addOk"></div>
+        <div style="display:flex;gap:10px;"><button class="btn btn-primary" onclick="addQuestion()">Сақтау</button><button class="btn btn-secondary" onclick="toggleAddForm()">Бас тарту</button></div>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>#</th><th>Сұрақ</th><th>Тақырып</th><th>Дұрыс</th><th>Күні</th><th></th></tr></thead>
+        <tbody id="qTableBody">
+          {% for q in questions %}
+          <tr id="qrow-{{ q.id }}">
+            <td style="color:var(--ink-3);">{{ loop.index }}</td>
+            <td style="max-width:300px;">{{ q.text[:60] }}{% if q.text|length > 60 %}...{% endif %}</td>
+            <td><span class="badge badge-blue">{{ q.topic }}</span></td>
+            <td style="font-family:var(--mono);color:var(--green);">{{ q.correct.upper() }}</td>
+            <td>{{ q.created_at.strftime('%d.%m.%Y') }}</td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteQuestion({{ q.id }})">Өшіру</button></td>
+          </tr>
+          {% else %}<tr><td colspan="6" style="text-align:center;color:var(--ink-3);padding:32px;">Сұрақтар жоқ</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+    <div class="admin-section" id="sec-results">
+      <div class="admin-header"><h1>Оқушылар нәтижелері</h1><p>Барлық тест тапсырушылардың нәтижелері</p></div>
+      <div class="table-wrap">
+        <table><thead><tr><th>#</th><th>Оқушы аты</th><th>Ұпай</th><th>Нәтиже</th><th>Деңгей</th><th>Күні</th></tr></thead>
+        <tbody>
+          {% for r in results %}
+          <tr>
+            <td style="color:var(--ink-3);">{{ loop.index }}</td>
+            <td style="font-weight:500;">{{ r.student_name }}</td>
+            <td style="font-family:var(--mono);">{{ r.score }}/{{ r.total }}</td>
+            <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:80px;height:8px;"><div class="progress-fill" style="width:{{ r.percentage }}%;background:{% if r.percentage >= 80 %}var(--green){% elif r.percentage >= 60 %}var(--accent){% else %}var(--amber){% endif %};"></div></div><span style="font-size:13px;font-weight:500;">{{ r.percentage }}%</span></div></td>
+            <td><span class="badge {% if r.percentage >= 80 %}badge-green{% elif r.percentage >= 60 %}badge-blue{% else %}badge-amber{% endif %}">{% if r.percentage >= 80 %}Өте жақсы{% elif r.percentage >= 60 %}Жақсы{% else %}Жеткіліксіз{% endif %}</span></td>
+            <td style="font-size:13px;color:var(--ink-3);">{{ r.taken_at.strftime('%d.%m.%Y %H:%M') }}</td>
+          </tr>
+          {% else %}<tr><td colspan="6" style="text-align:center;color:var(--ink-3);padding:32px;">Нәтиже жоқ</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+    <div class="admin-section" id="sec-content">
+      <div class="admin-header"><h1>Сайт мазмұны</h1><p>Басты беттің контентін өзгертіңіз</p></div>
+      <div class="card" style="max-width:600px;">
+        <div class="form-group"><label class="form-label">Басты тақырып</label><input type="text" class="form-input" id="hero_title" value="{{ contents.get('hero_title', '') }}"/></div>
+        <div class="form-group"><label class="form-label">Кіші тақырыптама</label><input type="text" class="form-input" id="hero_subtitle" value="{{ contents.get('hero_subtitle', '') }}"/></div>
+        <div class="form-group"><label class="form-label">Жоба туралы мәтін</label><textarea class="form-textarea" id="about_text">{{ contents.get('about_text', '') }}</textarea></div>
+        <div class="alert alert-success" id="contentOk"></div>
+        <button class="btn btn-primary" onclick="saveContent()">💾 Өзгерістерді сақтау</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function showSection(id,el){
+  document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  if(el)el.classList.add('active');
+}
+function toggleAddForm(){const f=document.getElementById('addQForm');f.style.display=f.style.display==='none'?'block':'none';}
+async function addQuestion(){
+  const data={text:document.getElementById('qText').value.trim(),option_a:document.getElementById('optA').value.trim(),option_b:document.getElementById('optB').value.trim(),option_c:document.getElementById('optC').value.trim(),option_d:document.getElementById('optD').value.trim(),correct:document.getElementById('correct').value,topic:document.getElementById('topic').value.trim()||'Жалпы'};
+  const err=document.getElementById('addErr'),ok=document.getElementById('addOk');
+  err.classList.remove('show');ok.classList.remove('show');
+  if(!data.text||!data.option_a||!data.option_b||!data.option_c||!data.option_d){err.textContent='Барлық өрістерді толтырыңыз';err.classList.add('show');return;}
+  const res=await fetch('/api/questions/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  const result=await res.json();
+  if(result.success){ok.textContent='Сұрақ сәтті қосылды!';ok.classList.add('show');setTimeout(()=>location.reload(),1200);}
+}
+async function deleteQuestion(id){
+  if(!confirm('Бұл сұрақты өшіргіңіз келе ме?'))return;
+  const res=await fetch(`/api/questions/${id}`,{method:'DELETE'});
+  const data=await res.json();
+  if(data.success)document.getElementById(`qrow-${id}`).remove();
+}
+async function saveContent(){
+  const data={hero_title:document.getElementById('hero_title').value,hero_subtitle:document.getElementById('hero_subtitle').value,about_text:document.getElementById('about_text').value};
+  const res=await fetch('/api/content/update',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  const result=await res.json();
+  if(result.success){const ok=document.getElementById('contentOk');ok.textContent='✓ Өзгерістер сақталды';ok.classList.add('show');setTimeout(()=>ok.classList.remove('show'),3000);}
+}
+</script>
+{% endblock %}
