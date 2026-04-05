@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Тест — InnovationEdu{% endblock %}
+{% block content %}
+<section style="padding:56px 0 40px;border-bottom:1px solid var(--border);">
+  <div class="container">
+    <span class="section-tag">Білімді тексеру</span>
+    <h1 class="section-title">Интерактивті тест</h1>
+    <p class="section-sub">Информатика пәні бойынша білімінізді тексеріңіз</p>
+  </div>
+</section>
+<section class="section">
+  <div class="container" style="max-width:680px;">
+    <div id="testIntro" class="card text-center" style="padding:48px;">
+      <div style="font-size:48px;margin-bottom:16px;">📝</div>
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:12px;">Тестке қош келдіңіз!</h2>
+      <p style="color:var(--ink-2);margin-bottom:24px;line-height:1.6;">Тест <strong id="totalQCount">...</strong> сұрақтан тұрады. Әр сұраққа бір дұрыс жауап бар.</p>
+      <div class="form-group" style="max-width:300px;margin:0 auto 20px;">
+        <label class="form-label">Атыңызды енгізіңіз</label>
+        <input type="text" class="form-input" id="studentName" placeholder="Мысалы: Айгерім Бекова"/>
+      </div>
+      <div id="nameError" style="display:none;color:var(--red);font-size:14px;margin-bottom:12px;">Аты-жөнді енгізіңіз</div>
+      <button class="btn btn-primary" onclick="startTest()">Тестті бастау →</button>
+    </div>
+    <div id="testLoading" class="card text-center" style="padding:48px;display:none;">
+      <div style="font-size:32px;margin-bottom:12px;animation:spin 1s linear infinite;display:inline-block;">⟳</div>
+      <p style="color:var(--ink-2);">Сұрақтар жүктелуде...</p>
+    </div>
+    <div id="testBlock" style="display:none;">
+      <div class="flex-between mb-16">
+        <span id="qCounter" style="font-size:14px;color:var(--ink-3);font-weight:500;"></span>
+        <span id="qTopic" class="badge badge-blue"></span>
+      </div>
+      <div class="progress-bar mb-24"><div class="progress-fill" id="qProgress" style="width:0%"></div></div>
+      <div class="question-card">
+        <p id="qText" style="font-size:18px;font-weight:600;line-height:1.5;margin-bottom:24px;"></p>
+        <div id="qOptions"></div>
+        <button class="btn btn-primary mt-24" id="nextBtn" onclick="nextQuestion()" style="display:none;">Келесі сұрақ →</button>
+        <button class="btn btn-primary mt-24" id="submitBtn" onclick="submitTest()" style="display:none;">Тестті аяқтау ✓</button>
+      </div>
+    </div>
+    <div id="testResult" style="display:none;">
+      <div class="card text-center" style="padding:48px;">
+        <div style="font-size:56px;font-weight:700;letter-spacing:-2px;" id="resultScore"></div>
+        <div id="resultEmoji" style="font-size:48px;margin:12px 0;"></div>
+        <h2 style="font-size:20px;font-weight:700;margin-bottom:8px;" id="resultTitle"></h2>
+        <p style="color:var(--ink-2);" id="resultMsg"></p>
+        <div style="margin:24px 0;"><div class="progress-bar" style="height:12px;"><div class="progress-fill" id="resultBar"></div></div></div>
+        <button class="btn btn-secondary" onclick="restartTest()">Қайтадан тапсыру</button>
+      </div>
+      <div id="resultDetails" style="margin-top:20px;"></div>
+    </div>
+  </div>
+</section>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+{% endblock %}
+{% block scripts %}
+<script>
+let questions=[],answers={},currentQ=0,answered=false;
+async function loadQuestions(){const res=await fetch('/api/questions');questions=await res.json();document.getElementById('totalQCount').textContent=questions.length;}
+loadQuestions();
+function startTest(){
+  const name=document.getElementById('studentName').value.trim();
+  if(!name){document.getElementById('nameError').style.display='block';return;}
+  document.getElementById('nameError').style.display='none';
+  document.getElementById('testIntro').style.display='none';
+  document.getElementById('testLoading').style.display='block';
+  setTimeout(()=>{document.getElementById('testLoading').style.display='none';document.getElementById('testBlock').style.display='block';renderQuestion();},800);
+}
+function renderQuestion(){
+  answered=false;
+  const q=questions[currentQ];
+  document.getElementById('qCounter').textContent=`Сұрақ ${currentQ+1} / ${questions.length}`;
+  document.getElementById('qTopic').textContent=q.topic;
+  document.getElementById('qProgress').style.width=`${((currentQ+1)/questions.length)*100}%`;
+  document.getElementById('qText').textContent=q.text;
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('submitBtn').style.display='none';
+  const opts=document.getElementById('qOptions');opts.innerHTML='';
+  ['a','b','c','d'].forEach((k,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';btn.id=`opt-${k}`;
+    btn.innerHTML=`<span class="option-key">${['А','Ә','Б','В'][i]}</span>${q.options[k]}`;
+    btn.onclick=()=>selectAnswer(k);
+    opts.appendChild(btn);
+  });
+}
+function selectAnswer(key){
+  if(answered)return;answered=true;
+  answers[questions[currentQ].id]=key;
+  document.querySelectorAll('.option-btn').forEach(b=>b.onclick=null);
+  document.getElementById(`opt-${key}`).classList.add('selected');
+  if(currentQ===questions.length-1)document.getElementById('submitBtn').style.display='flex';
+  else document.getElementById('nextBtn').style.display='flex';
+}
+function nextQuestion(){currentQ++;renderQuestion();}
+async function submitTest(){
+  const name=document.getElementById('studentName').value.trim();
+  document.getElementById('testBlock').style.display='none';
+  const res=await fetch('/api/submit-test',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers,student_name:name})});
+  const data=await res.json();showResult(data);
+}
+function showResult(data){
+  document.getElementById('testResult').style.display='block';
+  const pct=data.percentage;
+  document.getElementById('resultScore').textContent=`${data.score}/${data.total}`;
+  document.getElementById('resultBar').style.width=`${pct}%`;
+  let emoji,title,msg;
+  if(pct>=80){emoji='🏆';title='Керемет нәтиже!';msg='Сіз тамаша білім көрсеттіңіз!';document.getElementById('resultScore').style.color='var(--green)';}
+  else if(pct>=60){emoji='👍';title='Жақсы нәтиже!';msg='Аз ғана тақырыптарды қайталаңыз.';document.getElementById('resultScore').style.color='var(--accent)';}
+  else{emoji='📚';title='Тағы оқу керек';msg='Оқу бөліміне оралып қайталаңыз.';document.getElementById('resultScore').style.color='var(--amber)';}
+  document.getElementById('resultEmoji').textContent=emoji;
+  document.getElementById('resultTitle').textContent=title;
+  document.getElementById('resultMsg').textContent=msg;
+  document.getElementById('resultDetails').innerHTML=`<div class="card"><div class="grid-3" style="gap:12px;">
+    <div class="metric-card"><div class="metric-num" style="color:var(--green);">${data.score}</div><div class="metric-label">Дұрыс жауап</div></div>
+    <div class="metric-card"><div class="metric-num" style="color:var(--red);">${data.total-data.score}</div><div class="metric-label">Қате жауап</div></div>
+    <div class="metric-card"><div class="metric-num">${pct}%</div><div class="metric-label">Нәтиже</div></div>
+  </div></div>`;
+}
+function restartTest(){answers={};currentQ=0;document.getElementById('testResult').style.display='none';document.getElementById('testIntro').style.display='block';}
+</script>
+{% endblock %}
